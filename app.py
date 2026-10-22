@@ -2,6 +2,7 @@ from pathlib import Path
 import re
 from datetime import datetime
 from io import BytesIO
+from streamlit_autorefresh import st_autorefresh
 
 import pandas as pd
 import plotly.express as px
@@ -229,6 +230,8 @@ st.markdown(
     '<div class="subtitle">Homestay Payment Analytics · Local Private Dashboard</div>',
     unsafe_allow_html=True,
 )
+
+st_autorefresh(interval=300_000, key="dashboard_refresh")
 
 try:
     raw = load_google_sheet()
