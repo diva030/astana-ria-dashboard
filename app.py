@@ -18,6 +18,12 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+st.set_page_config(
+    page_title="Astana Ria D'Raja | Analytics",
+    page_icon="🏡",
+    layout="wide",
+)
+
 
 # Refined visual design: premium black and gold dashboard
 st.markdown("""
@@ -145,12 +151,6 @@ div[data-testid="stAlert"] {
 </style>
 """, unsafe_allow_html=True)
 
-
-st.set_page_config(
-    page_title="Astana Ria D'Raja | Analytics",
-    page_icon="🏡",
-    layout="wide",
-)
 
 BASE_DIR = Path(__file__).parent
 GOOGLE_SHEET_ID = "1C8tkN18UMDp7vLmGmnAmHg1ZydbmRCDWGIhqN_yV2Z8"
