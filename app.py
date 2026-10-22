@@ -921,7 +921,7 @@ def build_analysis_pdf():
         [Paragraph(
             f"Reporting period: {start_date.strftime('%d %b %Y')} – {end_date.strftime('%d %b %Y')}<br/>"
             f"Generated: {datetime.now().strftime('%d %B %Y, %I:%M %p')}<br/>"
-            f"Source workbook: {workbook.name}",
+            "Source: Connected Google Sheet",
             cover_meta
         )],
         [Spacer(1, 9 * mm)],
@@ -955,7 +955,7 @@ def build_analysis_pdf():
     story.append(Paragraph("Homestay Payment Analytics — Executive Report", styles["Heading2"]))
     story.append(Paragraph(
         f"Generated: {datetime.now().strftime('%d %B %Y, %I:%M %p')} &nbsp;&nbsp; | &nbsp;&nbsp; "
-        f"Workbook: {workbook.name}", styles["SmallNote"]
+        "Source: Connected Google Sheet", styles["SmallNote"]
     ))
     story.append(Paragraph("Report scope and filters", styles["SectionGold"]))
     story.append(Paragraph(
