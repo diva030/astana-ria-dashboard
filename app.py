@@ -6,6 +6,8 @@ from io import BytesIO
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import gspread
+from google.oauth2.service_account import Credentials
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.lib.pagesizes import A4, landscape
@@ -151,8 +153,24 @@ st.set_page_config(
 )
 
 BASE_DIR = Path(__file__).parent
-PREFERRED_FILE = BASE_DIR / "2024-2026 Astana Ria D'Raja(1).xlsx"
-EXCEL_FILES = sorted(BASE_DIR.glob("*.xlsx"))
+GOOGLE_SHEET_ID = "1C8tkN18UMDp7vLmGmnAmHg1ZydbmRCDWGIhqN_yV2Z8"
+GOOGLE_SHEET_GID = 0
+
+@st.cache_data(ttl=300)
+def load_google_sheet():
+    """Read the private Google Sheet using credentials stored in Streamlit Secrets."""
+    service_account_info = dict(st.secrets["gcp_service_account"])
+    scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+    credentials = Credentials.from_service_account_info(
+        service_account_info, scopes=scopes
+    )
+    client = gspread.authorize(credentials)
+    spreadsheet = client.open_by_key(GOOGLE_SHEET_ID)
+    worksheet = spreadsheet.get_worksheet_by_id(GOOGLE_SHEET_GID)
+    if worksheet is None:
+        raise ValueError("Could not find the worksheet with gid=0 in the Google Sheet.")
+    rows = worksheet.get_all_records()
+    return pd.DataFrame(rows)
 
 st.markdown(
     """
@@ -212,15 +230,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-if not EXCEL_FILES:
-    st.error("Excel workbook not found. Place the updated .xlsx workbook in the same folder as app.py.")
-    st.stop()
-
-workbook = PREFERRED_FILE if PREFERRED_FILE.exists() else EXCEL_FILES[0]
 try:
-    raw = pd.read_excel(workbook)
+    raw = load_google_sheet()
 except Exception as exc:
-    st.error(f"Unable to read the Excel workbook: {exc}")
+    st.error(
+        "Unable to read the private Google Sheet. Check that Streamlit Secrets are saved, "
+        "the service account email has Viewer access to the sheet, and the worksheet has gid=0. "
+        f"Technical details: {exc}"
+    )
     st.stop()
 
 required = [
