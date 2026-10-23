@@ -232,7 +232,9 @@ st.markdown(
 )
 
 st_autorefresh(interval=300_000, key="dashboard_refresh")
-
+if st.button("🔄 Refresh Data Now"):
+    load_google_sheet.clear()
+    st.rerun()
 try:
     raw = load_google_sheet()
 except Exception as exc:
